@@ -12,7 +12,7 @@ export {run};
 // setup scene, camera, and renderer.
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(3,1.5,3);
+camera.position.set(3, 1, 3);
 
 let renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -20,26 +20,31 @@ let renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+renderer.gammaOutput = true;
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // setup controls
 let controls = new OrbitControls(camera, renderer.domElement);
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.5;
 
 // candleFlames
 let candleFlame = {};
 let candleFlame2 = {};
 
+let cube = {};
 
 // light
 let candleColor = 0xe7e06d;
 let light = new THREE.AmbientLight(candleColor);
-light.intensity = 0.3;
+light.intensity = 0.1;
 scene.add(light);
 
 
 // helper
-var axesHelper = new THREE.AxesHelper( 5 );
+var axesHelper = new THREE.AxesHelper( 10 );
 //scene.add( axesHelper );
 
 
@@ -51,10 +56,7 @@ function run() {
 function loadObjects() {
     let geometry = new THREE.BoxGeometry();
     let material = new THREE.MeshStandardMaterial();
-    let cube = new THREE.Mesh(geometry, material);
-    //scene.add(cube);
-    
-    
+    cube = new THREE.Mesh(geometry, material);
     
     
     let loader = new GLTFLoader();
@@ -79,6 +81,7 @@ function lightScene() {
     
     let material = new THREE.MeshStandardMaterial();
     material.emissive = new THREE.Color(0xe7e06d);
+    material.emissiveIntensity = 1;
     material.transparent = true;
     material.opacity = 0.8;
     
@@ -95,7 +98,10 @@ function lightScene() {
     light2.shadow.radius = 10;
     light2.position.set(0, 3, 0);
     
+    //light2.add(cube);
+    
     candleFlame.add( light );
+    
     candleFlame2.add( light2 );
     
     let cakeBody = scene.getObjectByName('SimplifiedWV001', true);
@@ -125,7 +131,7 @@ function animate() {
     
     candleFlame.rotation.x = mult * Math.sin(elapsed * 2);
     candleFlame.rotation.y = mult * Math.sin(elapsed * 2);
-    candleFlame.add(axesHelper)
+    
     candleFlame2.rotation.x = -mult * Math.sin(5 + elapsed * 2);
     candleFlame2.rotation.y = -mult * Math.sin(5 + elapsed * 2);    
     
